@@ -9,42 +9,6 @@ float PL(float f, float d){
     return 28 + 22 * log10(d) + 20* log10(f);
 }
 
-/*QColor sigPower_to_color(double sigPower){
-    if(sigPower < -44 ){
-        return QColor(255,0,0); // <-- задание цвета
-    }
-    else if (sigPower < -54) {
-        return QColor(255,(sigPower*(-1.0))*1.7, 0); // <-- задание цвета
-    }
-    else if (sigPower < -64 ) {
-        return QColor(255, (sigPower * -1.0)*2, 0); // <-- задание цвета
-    }
-    else if (sigPower < -74 ) {
-        return QColor(255, (sigPower * -1.0)*2.4, 0); // <-- задание цвета
-    }
-    else if (sigPower < -84 ) {
-        return QColor(255,(sigPower * -1.0)*3 , 0); // <-- задание цвета
-    }
-    else if (sigPower < -94 ) {
-        return QColor((sigPower * -1.0)*1.4, 255, 0); // <-- задание цвета
-    }
-    else if (sigPower < -104 ) {
-        return QColor(0, 255,0); // <-- задание цвета
-    }
-    else if (sigPower < -114 ) {
-       return QColor(0, 255, (sigPower * -1.0)*1.2); // <-- задание цвета
-    }
-    else if (sigPower < -124 ) {
-        return QColor(0, (sigPower * -1.0)*2, 255); // <-- задание цвета
-    }
-    else if (sigPower < -134 ) {
-        return QColor(0, (sigPower * -1.0), 255); // <-- задание цвета
-    }
-    else if (sigPower < -144 ) {
-        return QColor(0, (sigPower * -1.0)*0.1, 255); // <-- задание цвета
-    }
-}
-*/
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
