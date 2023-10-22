@@ -19,20 +19,20 @@ double distance(int posX, int i, int posY, int j){
 
 
 void creat_barrier(int i, int j, float (&mass_sig)[1366][768]){
+            if  ( i > 1000 and j > 350 and i < 1015 and j < 650){
+                mass_sig[i][j] = 10.0;
+            }
+            if  ( i > 100 and j>500 and i < 400 and j < 550){
+                mass_sig[i][j] = 10.0;
+            }
+            if  ( i > 700 and j>600 and i < 750 and j < 620){
+                mass_sig[i][j] = 10.0;
+            }
 
-            if  ( i > 300 and j>200 and i < 400 and j < 230){
-                mass_sig[i][j] = 0.0;
-            }
-            else if  ( i > 700 and j>600 and i < 750 and j < 620){
-                mass_sig[i][j] = 0.0;
-            }
-            else if  ( i > 1000 and j > 350 and i < 1015 and j < 650){
-                mass_sig[i][j] = 0.0;
-    }
 }
 
 
-void Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
+float Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
     float Lg = (2 + 0.2*2.4)/10;
     float sum_loss = 0;
     const int deltaX = abs(x2 - x1);
@@ -41,16 +41,19 @@ void Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
     const int signY = y1 < y2 ? 1 : -1;
 
         int error = deltaX - deltaY;
+        if (mass_sig[x2][y2] < 0.0){
 
-        if (mass_sig[x2][y2] < 0){
 
-            sum_loss=0;
             while(x1 != x2 || y1 != y2)
             {
 
+                //if  ( x1 > 100 and y1>500 and x1 < 400 and y1 < 550)
+                    //printf("%f ",mass_sig[x1][y1]);
 
-                if (mass_sig[x1][y1]==0.0){
-                    sum_loss+=Lg;
+                if (mass_sig[x1][y1]==10.0 )     // на этом сравнении начинает с 700
+                {
+                     //printf("x-%d y-%d ", x2, y2);
+                    sum_loss+=Lg;//
                 }
                 int error2 = error * 2;
                 if(error2 > -deltaY)
@@ -64,10 +67,14 @@ void Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
                     y1 += signY;
                 }
 
+
             }
+            if ( sum_loss >0 )
+               // printf("%f  - %d %d ", sum_loss, x1, y1); // не считает сумму лосов у первой фигуры
+        mass_sig[x2][y2]-=sum_loss;
         }
-        //printf("%d ",deltaY);
-         mass_sig[x2][y2]-=sum_loss;
+
+        return sum_loss;
 }
 
 void MainWindow::creat_map(){
@@ -85,13 +92,9 @@ void MainWindow::creat_map(){
     QPixmap map(maxX, maxY);
     QPainter p(&map);
     float mass_sigPower[1366][768];
-    for(int i = 0; i<maxX; i++){
-        for(int j = 0; j < maxY; j++){
-            mass_sigPower[i][j]=0;
-        }
-    }
-    float Lg = 2 + 0.2*freq;
-    float Lc = 5 + 4.0*freq;
+
+    //float Lg = 2 + 0.2*freq;
+    //float Lc = 5 + 4.0*freq;
 
     //mass_sigPower = create_mass(maxX, maxY);
 
@@ -103,8 +106,17 @@ void MainWindow::creat_map(){
             float sigPower = TxPower + antGain - PL(freq, dist);
             mass_sigPower[i][j]=sigPower;
             creat_barrier(i, j, mass_sigPower);
-            Bresenham(posX,posY,i,j,mass_sigPower);
             //printf("%f ",mass_sigPower[i][j]);
+            //if (mass_sigPower[i][j]==10.0){
+                //printf("x-%d y-%d ", i, j);
+            //}
+            Bresenham(posX,posY,i,j,mass_sigPower);
+            if (mass_sigPower[i][j]==10.0){
+                printf("x-%d y-%d ", i, j);
+            }
+            //if  ( i > 700 and j>600 and i < 750 and j < 620){
+                //printf("%f ", bres);
+            //}
             //std :: cout<< sigPower<< std :: endl;
             //p.setPen(sigPower_to_color(sigPower));
 
@@ -128,7 +140,7 @@ void MainWindow::creat_map(){
 
 
 
-            if(mass_sigPower[i][j] == 0.0){
+            if(mass_sigPower[i][j] == 10.0){
                 p.setPen(QColor(0,0,0));
 
             }
