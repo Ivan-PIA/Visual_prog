@@ -104,7 +104,7 @@ void MainWindow::creat_map(){
             mass_sigPower[i][j]=sigPower;
             creat_barrier(i, j, mass_sigPower);
             Bresenham(posX,posY,i,j,mass_sigPower);
-            //printf("%f ",mass_sigPower[0][0]);
+            //printf("%f ",mass_sigPower[i][j]);
             //std :: cout<< sigPower<< std :: endl;
             //p.setPen(sigPower_to_color(sigPower));
 
