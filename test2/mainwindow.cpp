@@ -43,16 +43,18 @@ float Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
         int error = deltaX - deltaY;
         if (mass_sig[x2][y2] < 0.0){
 
-
-            while(x1 != x2 || y1 != y2)
+            do
             {
 
-                //if  ( x1 > 100 and y1>500 and x1 < 400 and y1 < 550)
+                //if  ( x1 > 700 and y1>600 and x1 < 750 and y1 < 620)
+               // if  ( x1 > 100 and y1>500 and x1 < 400 and y1 < 550)
+               // {
                     //printf("%f ",mass_sig[x1][y1]);
+                //}
 
                 if (mass_sig[x1][y1]==10.0 )     // на этом сравнении начинает с 700
                 {
-                     //printf("x-%d y-%d ", x2, y2);
+                     printf("x-%d y-%d ", x2, y2);
                     sum_loss+=Lg;//
                 }
                 int error2 = error * 2;
@@ -68,9 +70,11 @@ float Bresenham(int x1, int y1, int x2, int y2,float (&mass_sig)[1366][768]){
                 }
 
 
-            }
-            if ( sum_loss >0 )
-               // printf("%f  - %d %d ", sum_loss, x1, y1); // не считает сумму лосов у первой фигуры
+            }while(x1 != x2 || y1 != y2);
+
+            // if ( sum_loss >0 )
+            // printf("%f  - %d %d ", sum_loss, x1, y1); // не считает сумму лосов у первой фигуры
+
         mass_sig[x2][y2]-=sum_loss;
         }
 
@@ -111,9 +115,9 @@ void MainWindow::creat_map(){
                 //printf("x-%d y-%d ", i, j);
             //}
             Bresenham(posX,posY,i,j,mass_sigPower);
-            if (mass_sigPower[i][j]==10.0){
-                printf("x-%d y-%d ", i, j);
-            }
+            //if (mass_sigPower[i][j]==10.0){
+                //printf("x-%d y-%d ", i, j);
+            //}
             //if  ( i > 700 and j>600 and i < 750 and j < 620){
                 //printf("%f ", bres);
             //}
