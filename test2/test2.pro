@@ -16,11 +16,17 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    heat_map.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    material.cpp \
+    propagation_model.cpp
 
 HEADERS += \
-    mainwindow.h
+    heat_map.h \
+    mainwindow.h \
+    material.h \
+    propagation_model.h
 
 FORMS += \
     mainwindow.ui
