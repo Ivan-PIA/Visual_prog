@@ -11,12 +11,17 @@ class QColor;
 class Heat_map
 {
 public:
-    Heat_map(int pos_X, int pos_Y, int maxX,int maxY);
+    Heat_map(int maxX,int maxY);
     void dB_to_color(int maxX, int maxY, int posX, int posY, double **PowerSig_map);
     double Bresenham(int x1, int y1, int x2, int y2,double **PowerSig_map);
     double distance(int posX, int i, int posY, int j);
     void Draw_map(double **PowerSig_map);
-
+    QGraphicsView* Get_View();
+    double ** Get_PowerSig_map();
+    int Get_maxX();
+    int Get_maxY();
+    int Get_pos_Y();
+    int Get_pos_X();
 
 private:
     int pos_X = 650 , pos_Y = 360, maxX = 1300, maxY = 800;

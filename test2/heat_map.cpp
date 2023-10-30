@@ -2,18 +2,41 @@
 
 
 
-Heat_map::Heat_map(int pos_X, int pos_Y, int maxX,int maxY )
+Heat_map::Heat_map(int maxX,int maxY )
 {
+    QGraphicsScene* scene = new QGraphicsScene();
     PowerSig_map = new double*[maxX];
     for (int i=0; i < maxX; i++){
         PowerSig_map[maxX] = new double[maxY];
     }
 
     pixmap = new QPixmap(maxX, maxY);
+
     scene = new QGraphicsScene();
     view = new QGraphicsView(scene);
-    view->setGeometry(pos_X, pos_Y, maxX, maxY);
 
+
+
+}
+double** Heat_map::Get_PowerSig_map(){
+    return PowerSig_map;
+}
+
+int Heat_map::Get_maxX(){
+    return maxX;
+}
+int Heat_map::Get_maxY(){
+    return maxY;
+}
+int Heat_map::Get_pos_X(){
+    return pos_X;
+}
+int Heat_map::Get_pos_Y(){
+    return pos_Y;
+}
+
+QGraphicsView* Heat_map::Get_View(){
+    return view;
 }
 
 double distance(int posX, int i, int posY, int j){
@@ -95,8 +118,8 @@ void Heat_map::dB_to_color(int maxX, int maxY, int posX, int posY, double **mass
 }
 
 void Heat_map :: Draw_map(double **mass_sigPower){
-    QPixmap map(maxX, maxY);
-    QPainter p(&map);
+
+    QPainter p(pixmap);
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
             if(mass_sigPower[i][j] > -44  ){
@@ -126,7 +149,7 @@ void Heat_map :: Draw_map(double **mass_sigPower){
     }
 
     p.end();
-    scene->addPixmap(map);
-    QGraphicsView* view = new QGraphicsView(scene);
-    setCentralWidget(view);
+
+
+
 }
