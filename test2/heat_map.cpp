@@ -11,7 +11,7 @@ Heat_map::Heat_map()
 
     PowerSig_map = new double*[maxX];
     for (int i=0; i < maxX; i++){
-        PowerSig_map[maxX] = new double[maxY];
+        PowerSig_map[i] = new double[maxY];
     }
 }
 
@@ -57,18 +57,18 @@ void creat_barrier(int i, int j, double **mass_sig){
                 mass_sig[i][j] = 10.0;
             }
             if  ( i > 100 and j>500 and i < 400 and j < 550){
-                mass_sig[i][j] = 11.0;
+                mass_sig[i][j] = 10.0;
             }
             if  ( i > 700 and j>600 and i < 750 and j < 620){
-                mass_sig[i][j] = 12.0;
+                mass_sig[i][j] = 11.0;
             }
-            if  ( i > 650 and j>500 and i < 700 and j < 520){
+            if  ( i > 600 and j>200 and i < 750 and j < 230){
                 mass_sig[i][j] = 13.0;
             }
 
 }
 
-double Heat_map::Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
+double Heat_map::Bresenham(int x1, int y1, int x2, int y2){
     double Lg = Get_Glass(freq);
     double Lg_r = Get_Glass_IRR(freq);
     double Lc = Get_Concrete(freq);
@@ -80,24 +80,24 @@ double Heat_map::Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
     const int signY = y1 < y2 ? 1 : -1;
 
         int error = deltaX - deltaY;
-        if (mass_sig[x2][y2] < 0.0){
+        if (PowerSig_map[x2][y2] < 0.0){
 
             while(x1 != x2 || y1 != y2)
             {
 
-                if (mass_sig[x1][y1]==10.0 )
+                if (PowerSig_map[x1][y1]==10.0 )
                 {
                     sum_loss+=Lg;
                 }
-                else if (mass_sig[x1][y1]==11.0 )
+                else if (PowerSig_map[x1][y1]==11.0 )
                 {
                     sum_loss+=Lg_r;
                 }
-                else if (mass_sig[x1][y1]==12.0 )
+                else if (PowerSig_map[x1][y1]==12.0 )
                 {
                     sum_loss+=Lc;
                 }
-                else if (mass_sig[x1][y1]==13.0 )
+                else if (PowerSig_map[x1][y1]==13.0 )
                 {
                     sum_loss+=Lw;
                 }
@@ -116,7 +116,7 @@ double Heat_map::Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
 
             }
 
-        mass_sig[x2][y2]-=sum_loss;
+        PowerSig_map[x2][y2]-=sum_loss;
         }
         return sum_loss;
 }
@@ -135,17 +135,22 @@ void Heat_map::Lossing(){
         }
 
     }
+
+}
+
+void Heat_map::Propag_loss(){
+
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
 
-           Bresenham(pos_X,pos_Y,i,j,PowerSig_map);
+           Bresenham(pos_X,pos_Y,i,j);
         }
     }
 }
 
 void Heat_map :: Draw_map(){
 
-    QPainter p(pixmap);
+    QPainter p(map);
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
             if(PowerSig_map[i][j] > -44  ){
@@ -168,14 +173,25 @@ void Heat_map :: Draw_map(){
 
 
             if(PowerSig_map[i][j] == 10.0){
-                p.setPen(QColor(0,0,0));
+                p.setPen(QColor(189,234,240));
+            }
+            else if(PowerSig_map[i][j] == 11.0){
+                p.setPen(QColor(77,88,90));
+            }
+            else if(PowerSig_map[i][j] == 12.0){
+                p.setPen(QColor(140,140,140));
+            }
+            else if(PowerSig_map[i][j] == 13.0){
+                p.setPen(QColor(96,65,13));
             }
             p.drawPoint(i, j);
         }
     }
 
     p.end();
+    scene->addPixmap(*map);
 
+    view = new QGraphicsView(scene);
 
 
 }
