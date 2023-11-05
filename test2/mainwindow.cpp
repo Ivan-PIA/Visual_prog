@@ -16,8 +16,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
     scene = new QGraphicsScene();
     map = new Heat_map();
     map ->Lossing();
+    map->Propag_loss();
     map ->Draw_map();
+
     setCentralWidget(map->Get_View());
+    //this -> layout()->addWidget(map->Get_View());
 
 }
 
