@@ -19,7 +19,8 @@ class Heat_map
     public:
         Heat_map();
         void Lossing();
-        double Bresenham(int x1, int y1, int x2, int y2,double **PowerSig_map);
+        void Propag_loss();
+        double Bresenham(int x1, int y1, int x2, int y2);
         double distance(int posX, int i, int posY, int j);
         void Draw_map();
         double ** Get_PowerSig_map();
@@ -34,7 +35,7 @@ class Heat_map
 
 
     private:
-        int pos_X = 650 , pos_Y = 360, maxX = 1300, maxY = 800;
+        int pos_X = 650 , pos_Y = 360, maxX = 1900, maxY = 1080;
         double **PowerSig_map;
 
         int onePixDistance = 10;
