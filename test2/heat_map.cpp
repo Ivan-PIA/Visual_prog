@@ -1,23 +1,22 @@
 #include "heat_map.h"
+#include "material.h"
 
 
-
-Heat_map::Heat_map(int maxX,int maxY )
+Heat_map::Heat_map()
 {
-    QGraphicsScene* scene = new QGraphicsScene();
+
+    map = new QPixmap(maxX, maxY);
+
+    scene = new QGraphicsScene();
+
     PowerSig_map = new double*[maxX];
     for (int i=0; i < maxX; i++){
         PowerSig_map[maxX] = new double[maxY];
     }
-
-    pixmap = new QPixmap(maxX, maxY);
-
-    scene = new QGraphicsScene();
-    view = new QGraphicsView(scene);
-
-
-
 }
+
+
+
 double** Heat_map::Get_PowerSig_map(){
     return PowerSig_map;
 }
@@ -34,12 +33,18 @@ int Heat_map::Get_pos_X(){
 int Heat_map::Get_pos_Y(){
     return pos_Y;
 }
-
-QGraphicsView* Heat_map::Get_View(){
-    return view;
+int Heat_map::Get_onePixDistance(){
+    return onePixDistance;
 }
 
-double distance(int posX, int i, int posY, int j){
+int Heat_map::Get_freq(){
+    return freq;
+}
+
+QGraphicsView *Heat_map::Get_View(){
+    return view;
+}
+double Heat_map ::distance(int posX, int i, int posY, int j){
     return sqrt(pow(abs(posX - i),2) + pow(abs(posY - j),2));
 }
 
@@ -52,16 +57,22 @@ void creat_barrier(int i, int j, double **mass_sig){
                 mass_sig[i][j] = 10.0;
             }
             if  ( i > 100 and j>500 and i < 400 and j < 550){
-                mass_sig[i][j] = 10.0;
+                mass_sig[i][j] = 11.0;
             }
             if  ( i > 700 and j>600 and i < 750 and j < 620){
-                mass_sig[i][j] = 10.0;
+                mass_sig[i][j] = 12.0;
+            }
+            if  ( i > 650 and j>500 and i < 700 and j < 520){
+                mass_sig[i][j] = 13.0;
             }
 
 }
 
-double Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
-    double Lg = (2 + 0.2*2.4)/10;
+double Heat_map::Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
+    double Lg = Get_Glass(freq);
+    double Lg_r = Get_Glass_IRR(freq);
+    double Lc = Get_Concrete(freq);
+    double Lw = Get_Wood(freq);
     double sum_loss = 0;
     const int deltaX = abs(x2 - x1);
     const int deltaY = abs(y2 - y1);
@@ -76,8 +87,21 @@ double Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
 
                 if (mass_sig[x1][y1]==10.0 )
                 {
-                    sum_loss+=Lg;//
+                    sum_loss+=Lg;
                 }
+                else if (mass_sig[x1][y1]==11.0 )
+                {
+                    sum_loss+=Lg_r;
+                }
+                else if (mass_sig[x1][y1]==12.0 )
+                {
+                    sum_loss+=Lc;
+                }
+                else if (mass_sig[x1][y1]==13.0 )
+                {
+                    sum_loss+=Lw;
+                }
+
                 int error2 = error * 2;
                 if(error2 > -deltaY)
                 {
@@ -91,57 +115,59 @@ double Bresenham(int x1, int y1, int x2, int y2,double **mass_sig){
                 }
 
             }
+
         mass_sig[x2][y2]-=sum_loss;
         }
         return sum_loss;
 }
 
 
-void Heat_map::dB_to_color(int maxX, int maxY, int posX, int posY, double **mass_sigPower){
+void Heat_map::Lossing(){
+
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
 
-            double dist = distance(posX,i,posY,j);
+            double dist = distance(pos_X,i,pos_Y,j);
             dist *= onePixDistance;
             float sigPower = TxPower + antGain - PL(freq, dist);
-            mass_sigPower[i][j]=sigPower;
-            creat_barrier(i, j, mass_sigPower);
+            PowerSig_map[i][j]=sigPower;
+            creat_barrier(i, j, PowerSig_map);
         }
 
     }
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
 
-            Bresenham(posX,posY,i,j,mass_sigPower);
+           Bresenham(pos_X,pos_Y,i,j,PowerSig_map);
         }
     }
 }
 
-void Heat_map :: Draw_map(double **mass_sigPower){
+void Heat_map :: Draw_map(){
 
     QPainter p(pixmap);
     for(int i = 0; i < maxX; i++){
         for(int j = 0; j < maxY; j++){
-            if(mass_sigPower[i][j] > -44  ){
+            if(PowerSig_map[i][j] > -44  ){
                 p.setPen(QColor(255,0,0)); // <-- задание цвета
             }
 
-            else if (mass_sigPower[i][j] > -84 ) {
-                p.setPen(QColor(255,((mass_sigPower[i][j]+44)*(-1.0)*6.375), 0)); // <-- задание цвета
+            else if (PowerSig_map[i][j] > -84 ) {
+                p.setPen(QColor(255,((PowerSig_map[i][j]+44)*(-1.0)*6.375), 0)); // <-- задание цвета
             }
-            else if (mass_sigPower[i][j] > -104 ) {
-                p.setPen(QColor((255+((mass_sigPower[i][j]+84)*12.75)), 255,0)); // <-- задание цвета
+            else if (PowerSig_map[i][j] > -104 ) {
+                p.setPen(QColor((255+((PowerSig_map[i][j]+84)*12.75)), 255,0)); // <-- задание цвета
             }
-            else if (mass_sigPower[i][j] > -124 ) {
-               p.setPen(QColor(0, 255, ((mass_sigPower[i][j]+104)*(-1.0)*12.75))); // <-- задание цвета
+            else if (PowerSig_map[i][j] > -124 ) {
+               p.setPen(QColor(0, 255, ((PowerSig_map[i][j]+104)*(-1.0)*12.75))); // <-- задание цвета
             }
-            else if (mass_sigPower[i][j] > -144 ) {
+            else if (PowerSig_map[i][j] > -144 ) {
                 //temp = 255+((mass_sigPower[i][j]+124)*12.75);
-                p.setPen(QColor(0, 255+((mass_sigPower[i][j]+124)*12.75), 255)); // <-- задание цвета
+                p.setPen(QColor(0, 255+((PowerSig_map[i][j]+124)*12.75), 255)); // <-- задание цвета
             }
 
 
-            if(mass_sigPower[i][j] == 10.0){
+            if(PowerSig_map[i][j] == 10.0){
                 p.setPen(QColor(0,0,0));
             }
             p.drawPoint(i, j);
@@ -152,4 +178,13 @@ void Heat_map :: Draw_map(double **mass_sigPower){
 
 
 
+}
+
+Heat_map::~Heat_map(){
+
+
+
+    delete pixmap;
+    delete view;
+    delete scene;
 }

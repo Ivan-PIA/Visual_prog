@@ -1,12 +1,9 @@
 #include "material.h"
 
-Material::Material()
-{
 
-}
 
 double Get_Glass(double freq){
-    return (2 + 0.2*2.4);
+    return (2 + 0.2*freq);
 }
 
 double Get_Glass_IRR(double freq){
