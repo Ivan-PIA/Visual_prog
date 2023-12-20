@@ -158,17 +158,17 @@ void Heat_map :: Draw_map(char *file_save){
             }
 
             else if (PowerSig_map[i][j] > -84 ) {
-                p.setPen(QColor(255,((PowerSig_map[i][j]+44)*(-1.0)*6.375), 0)); // <-- задание цвета
+                p.setPen(QColor(255,((PowerSig_map[i][j]+44)*(-1.0)*6.375), 0)); 
             }
             else if (PowerSig_map[i][j] > -104 ) {
-                p.setPen(QColor((255+((PowerSig_map[i][j]+84)*12.75)), 255,0)); // <-- задание цвета
+                p.setPen(QColor((255+((PowerSig_map[i][j]+84)*12.75)), 255,0)); 
             }
             else if (PowerSig_map[i][j] > -124 ) {
-               p.setPen(QColor(0, 255, ((PowerSig_map[i][j]+104)*(-1.0)*12.75))); // <-- задание цвета
+               p.setPen(QColor(0, 255, ((PowerSig_map[i][j]+104)*(-1.0)*12.75))); 
             }
             else if (PowerSig_map[i][j] > -144 ) {
                 //temp = 255+((mass_sigPower[i][j]+124)*12.75);
-                p.setPen(QColor(0, 255+((PowerSig_map[i][j]+124)*12.75), 255)); // <-- задание цвета
+                p.setPen(QColor(0, 255+((PowerSig_map[i][j]+124)*12.75), 255)); 
             }
 
 
